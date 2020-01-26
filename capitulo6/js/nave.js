@@ -24,5 +24,10 @@ Nave.prototype = {
 
   desenhar: function() {
     this.context.drawImage(this.imagem, this.x, this.y, this.imagem.width, this.imagem.height);
+  },
+
+  atirar: function() {
+    let t = new Tiro(this.context, this);
+    this.animacao.novoSprite(t);
   }
 }
