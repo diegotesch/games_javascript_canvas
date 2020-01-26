@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Movimentando personagem com keydown</title>
+</head>
+<body>
+  <canvas id="board" width="500" height="500"></canvas>
+  <script>
+    let canvas = document.querySelector("#board");
+    let ctx = canvas.getContext('2d');
+
+    //posicao inicial do personagem
+    let posicao = 0;
+    desenharPersonagem();
+
+    document.addEventListener('keydown', function(evento) {
+      if ( evento.keyCode == 37 ) { //seta para esquerda
+        posicao -= 10;
+        desenharPersonagem();
+        return;
+      }
+
+      if ( evento.keyCode == 39 ) { //seta para direita 
+        posicao += 10;
+        desenharPersonagem();
+        return;
+      }
+    });
+
+    function desenharPersonagem() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(posicao, 100, 20, 50);
+    }
+  </script>
+</body>
+</html>
