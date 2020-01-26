@@ -8,7 +8,7 @@ function Tiro(context, nave) {
   this.x = nave.x + nave.imagem.width / 2 - this.largura / 2;
   this.y = nave.y - this.altura;
   this.velocidade = 10;
-  this.cor = 'green';
+  this.cor = 'yellow';
 }
 
 Tiro.prototype = {
