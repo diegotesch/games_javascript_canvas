@@ -5,6 +5,7 @@ function Nave(context, teclado, imagem) {
   this.x = 0;
   this.y = 0;
   this.velocidade = 0;
+  this.pontosVida = 3;
 }
 
 Nave.prototype = {
@@ -69,8 +70,14 @@ Nave.prototype = {
     // se colidiu com um ovni
     if (outro instanceof Ovni) {
       // fim de jogo
-      this.animacao.desligar();
-      alert("GAME OVER");
+      this.pontosVida--;
+      this.animacao.excluirSprite(outro);
+      this.colisor.excluirSprite(outro);
+
+      if(!this.pontosVida){
+        this.animacao.desligar();
+        alert("GAME OVER");
+      }
     }
   }
 }
