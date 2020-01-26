@@ -8,12 +8,18 @@ function Tiro(context, nave) {
   this.x = nave.x + nave.imagem.width / 2 - this.largura / 2;
   this.y = nave.y - this.altura;
   this.velocidade = 10;
-  this.cor = 'green';
+  this.cor = 'yellow';
 }
 
 Tiro.prototype = {
   atualizar: function() {
     this.y -= this.velocidade;
+
+    // excluir o tiro quando sumir da tela
+    if (this.y < -this.altura) {
+      this.animacao.excluirSprite(this);
+      this.colisor.excluirSprite(this);
+    }
   },
 
   desenhar: function() {
@@ -22,5 +28,20 @@ Tiro.prototype = {
     ctx.fillStyle = this.cor;
     ctx.fillRect(this.x, this.y, this.largura, this.altura);
     ctx.restore();
+  },
+
+  retangulosColisao: function() {
+    return [
+      {
+        x: this.x,
+        y: this.y,
+        largura: this.largura,
+        altura: this.altura
+      }
+    ]
+  },
+
+  colidiuCom: function() {
+    
   }
 }

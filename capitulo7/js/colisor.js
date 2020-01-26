@@ -1,11 +1,13 @@
 function Colisor() {
   this.sprites = [];
   this.aoColidir = null;
+  this.spritesExcluir = [];
 }
 
 Colisor.prototype = {
   novoSprite: function(sprite) {
     this.sprites.push(sprite);
+    sprite.colisor = this;
   },
 
   processar: function() {
@@ -35,6 +37,8 @@ Colisor.prototype = {
         }
       }
     }
+
+    this.processarExclusoes();
   },
 
   testarColisao: function(sprite1, sprite2) {
@@ -70,12 +74,39 @@ Colisor.prototype = {
   stringUnica: function(sprite) {
     let str = '';
     let retangulos = sprite.retangulosColisao();
-    retangulos.forEach(function(ret){
-      str += `x:${ret.x},
-              y:${ret.y},
-              l:${ret.largura},
-              a:${ret.altura}\n`;
-    });
+
+    if(retangulos){
+      retangulos.forEach(function(ret){
+        str += `x:${ret.x},
+                y:${ret.y},
+                l:${ret.largura},
+                a:${ret.altura}\n`;
+      });
+    }
+    
     return str;
+  },
+
+  excluirSprite: function(sprite) {
+    this.spritesExcluir.push(sprite);
+  },
+
+  processarExclusoes: function() {
+    // cria um novo array com os elementos nao excluidos
+    let novoArray = [];
+
+    for (let i in this.sprites) {
+      if (this.spritesExcluir.indexOf(this.sprites[i]) == -1)
+        novoArray.push(this.sprites[i]);
+    }
+    // let novoArray = this.sprites.filter(function(sprite){
+    //   return this.spriteExcluir && this.spritesExcluir.findIndex((item) => item == sprite) == -1;
+    // });
+
+    // limpar o array de exclusoes
+    this.spritesExcluir = [];
+
+    // substituir o velho pelo novo
+    this.sprites = novoArray;
   }
 }
