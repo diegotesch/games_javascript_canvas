@@ -86,11 +86,13 @@ function iniciarObjetos() {
   estrelas =  new Fundo(context, imagens.estrelas);
   nuvens =    new Fundo(context, imagens.nuvens);
   nave =      new Nave(context, teclado, imagens.nave, imagens.explosao);
+  painel =    new Painel(context, nave);
 
   // Ligações entre objetos
   animacao.novoSprite(espaco);
   animacao.novoSprite(estrelas);
   animacao.novoSprite(nuvens);
+  animacao.novoSprite(painel);
   animacao.novoSprite(nave);
 
   colisor.novoSprite(nave);
@@ -114,7 +116,15 @@ function configuracoesIniciais() {
   // Game Over
   nave.acabaramVidas = function() {
     animacao.desligar();
-    alert('GAME OVER');
+    gameOver();
+  }
+
+  // pontuacao
+  colisor.aoColidir = function(o1, o2) {
+    // tiro com ovni
+    if ( (o1 instanceof Tiro && o2 instanceof Ovni) || (o1 instanceof Ovni && o2 instanceof Tiro) ){
+      painel.pontuacao += 10;
+    }
   }
 }
 
@@ -189,6 +199,8 @@ function mostrarLinkJogar() {
 }
 
 function iniciarJogo() {
+  criacaoInimigos.ultimoOvni = new Date().getTime();
+  painel.pontuacao = 0;
   // tiro
   ativarTiro(true);
 
@@ -205,4 +217,46 @@ function iniciarJogo() {
 
 function vidaExtra() {
   nave.vidaExtra();
+}
+
+function gameOver() {
+  // tiro
+  ativarTiro(false);
+
+  // pausa
+  teclado.disparou(ENTER, null);
+
+  // parar a musica e rebobinar
+  musicaAcao.pause();
+  musicaAcao.currentTime = 0.0;
+
+  // fundo
+  context.drawImage(imagens.espaco, 0, 0, canvas.width, canvas.height);
+
+  // texto "game over"
+  context.save();
+  context.fillStyle = 'white';
+  context.strokeStyle = 'black';
+  context.font = '70px sans-serif';
+  context.fillText('GAME OVER', 40, 200);
+  context.strokeText('GAME OVER', 40, 200);
+  context.restore();
+
+  // volta o link 'jogar'
+  mostrarLinkJogar();
+
+  // restaurar as condicoes da nave
+  nave.vidasExtras = 3;
+  nave.posicionar();
+  animacao.novoSprite(nave);
+  colisor.novoSprite(nave);
+
+  removerInimigos();
+}
+
+function removerInimigos() {
+  for (let i in animacao.srpites) {
+    if (animacao.sprites[i] instanceof Ovni)
+      animacao.excluirSprite(animacao.sprites[i]);
+  }
 }
