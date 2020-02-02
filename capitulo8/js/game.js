@@ -195,7 +195,14 @@ function iniciarJogo() {
   // pausa
   teclado.disparou(ENTER, pausarJogo);
 
+  // cheat code vidas extras
+  teclado.disparou(ALTGR, vidaExtra);
+
   document.querySelector("#link_jogar").style.display = 'none';
   musicaAcao.play();
   animacao.ligar();
+}
+
+function vidaExtra() {
+  nave.vidaExtra();
 }

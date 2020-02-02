@@ -117,5 +117,9 @@ Nave.prototype = {
     let canvas = this.context.canvas;
     this.x = canvas.width / 2 - 18;
     this.y = canvas.height - 48;
+  },
+
+  vidaExtra: function() {
+    this.vidasExtras++;
   }
 }

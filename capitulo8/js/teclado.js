@@ -4,6 +4,7 @@ let SETA_DIREITA = 39;
 let SETA_ABAIXO = 40;
 let ESPACO = 32;
 let ENTER = 13;
+let ALTGR = 225;
 
 function Teclado (elemento) {
   this.elemento = elemento;
