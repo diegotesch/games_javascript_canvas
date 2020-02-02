@@ -1,29 +1,46 @@
-function Nave(context, teclado, imagem) {
+function Nave(context, teclado, imagem, imgExplosao) {
   this.context = context;
   this.teclado = teclado;
   this.imagem = imagem;
   this.x = 0;
   this.y = 0;
   this.velocidade = 0;
+  this.spritesheet = new Spritesheet(context, imagem, 3, 2);
+  this.spritesheet.linha = 0;
+  this.spritesheet.intervalo = 100;
+  this.imgExplosao = imgExplosao;
+  this.acabaramVidas = null;
+  this.vidasExtras = 3;
 }
 
 Nave.prototype = {
   atualizar: function() {
-    if (this.teclado.pressionada(SETA_ESQUERDA) && this.x > 0)
-      this.x -= this.velocidade;
+    let incremento = this.velocidade * this.animacao.decorrido / 1000;
 
-    if (this.teclado.pressionada(SETA_DIREITA) && this.x < this.context.canvas.width - this.imagem.width)
-      this.x += this.velocidade;
+    if (this.teclado.pressionada(SETA_ESQUERDA) && this.x > 0)
+      this.x -= incremento;
+
+    if (this.teclado.pressionada(SETA_DIREITA) && this.x < this.context.canvas.width - 36)
+      this.x += incremento;
 
     if (this.teclado.pressionada(SETA_ACIMA) && this.y > 0)
-      this.y -= this.velocidade;
+      this.y -= incremento;
 
-    if (this.teclado.pressionada(SETA_ABAIXO) && this.y < this.context.canvas.height - this.imagem.height)
-      this.y += this.velocidade;
+    if (this.teclado.pressionada(SETA_ABAIXO) && this.y < this.context.canvas.height - 48)
+      this.y += incremento;
   },
 
   desenhar: function() {
-    this.context.drawImage(this.imagem, this.x, this.y, this.imagem.width, this.imagem.height);
+    // this.context.drawImage(this.imagem, this.x, this.y, this.imagem.width, this.imagem.height);
+    if (this.teclado.pressionada(SETA_ESQUERDA))
+      this.spritesheet.linha = 1;
+    else if (this.teclado.pressionada(SETA_DIREITA))
+      this.spritesheet.linha = 2;
+    else 
+      this.spritesheet.linha = 0;
+
+    this.spritesheet.desenhar(this.x, this.y);
+    this.spritesheet.proximoQuadro();
   },
 
   atirar: function() {
@@ -68,9 +85,37 @@ Nave.prototype = {
   colidiuCom: function(outro) {
     // se colidiu com um ovni
     if (outro instanceof Ovni) {
-      // fim de jogo
-      this.animacao.desligar();
-      alert("GAME OVER");
+      this.animacao.excluirSprite(this);
+      this.animacao.excluirSprite(outro);
+      this.colisor.excluirSprite(this);
+      this.colisor.excluirSprite(outro);
+      
+      let exp1 = new Explosao(this.context, this.imgExplosao, this.x, this.y);
+      let exp2 = new Explosao(this.context, this.imgExplosao, outro.x, outro.y);
+
+      this.animacao.novoSprite(exp1);
+      this.animacao.novoSprite(exp2);
+
+      let nave  = this;
+      exp1.fimDaExplosao = function() {
+        nave.vidasExtras--;
+
+        if (nave.vidasExtras < 0) {
+          if (nave.acabaramVidas) nave.acabaramVidas();
+        } else {
+          // recolocar a nave no engine
+          nave.colisor.novoSprite(nave);
+          nave.animacao.novoSprite(nave);
+
+          nave.posicionar();
+        }
+      }
     }
+  },
+
+  posicionar: function() {
+    let canvas = this.context.canvas;
+    this.x = canvas.width / 2 - 18;
+    this.y = canvas.height - 48;
   }
 }

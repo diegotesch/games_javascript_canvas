@@ -3,6 +3,7 @@ let SETA_ACIMA = 38
 let SETA_DIREITA = 39;
 let SETA_ABAIXO = 40;
 let ESPACO = 32;
+let ENTER = 13;
 
 function Teclado (elemento) {
   this.elemento = elemento;
